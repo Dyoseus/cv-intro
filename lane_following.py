@@ -5,7 +5,7 @@ import LincolnLabsSecretSauce  as llss
 
 cap = cv2.VideoCapture('AUV_Vid.mkv')
 
-lineArray = []
+
 
 # Read until the video is completed
 while cap.isOpened():
