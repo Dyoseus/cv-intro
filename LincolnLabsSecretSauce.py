@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import random as rdm
 
 def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLineLength = 100, maxLineGap = 10):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
@@ -32,10 +33,10 @@ def get_slopes_intercepts(lines):
     slopes = []
     intercepts = []
     for line in lines:
-        x1, y1, x2, y2 = line
-        slopie = (y2 - y1) / (x2 - x1)
-        slopes.append(slopie)
-        b = y1 - (slopie * x1)
+        x1, y1, x2, y2 = line[0]  # Extract the coordinates from the inner list
+        slope = (y2 - y1) / (x2 - x1)
+        slopes.append(slope)
+        b = y1 - (slope * x1)
         intercepts.append(b)
     return slopes, intercepts
 
@@ -44,21 +45,26 @@ def detect_lanes(lines):
     lanes = []
     slopes, x_intercepts = get_slopes_intercepts(lines)
 
-    while i < range(slopes):
-        if slopes[i] - slopes[i+1] == range (-0.3, 0.3) or slopes[i+1] - slopes[i] == range (-0.3, 0.3):
+    while i < len(slopes) - 1: 
+        if abs(slopes[i] - slopes[i+1]) < 0.3 or abs(slopes[i+1] - slopes[i]) < 0.3:
             lanes.append([lines[i], lines[i+1]])
-            i+=2
+            i += 2
         else:
-            if np.abs(slopes[i+1] - slopes[i]) < 2 and np.abs(x_intercepts[i+1]-[i]) < 200:
+            if np.abs(slopes[i+1] - slopes[i]) < 2 and np.abs(x_intercepts[i+1] - x_intercepts[i]) < 200:
                 lanes.append([lines[i], lines[i+1]])
-                i+=2
+                i += 2
             else:
-                i+=1
+                i += 1
 
     return lanes
 
 def draw_lanes(img, lanes):
-    return 0
+    for lane in lanes:
+        for line in lane:
+            x1, y1, x2, y2 = line[0]
+            color = (rdm.randint(0,255), rdm.randint(0,255), rdm.randint(0,255))
+            cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 6)
+    return img
 
 
 
