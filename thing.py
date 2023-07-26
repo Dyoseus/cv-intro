@@ -2,40 +2,41 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def detect_lines(img, threshold1, threshold2, apertureSize, minLineLength, maxLineGap):
-    img = cv2.imread(str(img))
-
+def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLineLength = 100, maxLineGap = 10):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
-    edges = cv2.Canny(gray, threshold1, threshold2, apertureSize) # detect edges
+    edges = cv2.Canny(gray, threshold1, threshold2, apertureSize = apertureSize) # detect edges, gray is image in grayscale, 50 and 150 represent 2 images that have been 
+                                                      # threshholded at 2 different levels, apertureSize controls how much light the image gets and how exposed it is
+    lines = cv2.HoughLinesP(
+                    edges, #described above
+                    rho = 1, #1 pixel resolution parameter
+                    theta = np.pi/180, # 1 degree resolution parameter
+                    threshold = 125, #min number of intersections/votes
+                    minLineLength = minLineLength,
+                    maxLineGap = maxLineGap,
+            ) # detect lines
 
-    lines = cv2.HoughLinesP(edges, 5, np.pi/180, 5, minLineLength, maxLineGap) # detect lines
 
     return lines
 
-def draw_lines(img, lines, color = (255, 0, 0)):
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        cv2.line(img, (x1, y1), (x2, y2), color, 2)
-
-        show = plt.imshow(img)
-    return show
+def draw_lines(img, lines, color=(255, 0, 0)):
+    try:
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            cv2.line(img, (x1, y1), (x2, y2), color, 2)
+    except TypeError:
+        pass
+    return img
         
 
 def get_slopes_intercepts(lines):
     slopes = []
     intercepts = []
-    for i in range(len(lines)):
-        x1, y1, x2, y2 = lines[i]
-        slopes.append((y2-y1)/(x2-x1))
-
-    for i in range(len(slopes)):
-        x1, y1, x2, y2 = lines[i]
-        slopie = slopes[i]
-        b = y1-(slopie*x1)
+    for line in lines:
+        x1, y1, x2, y2 = line
+        slopie = (y2 - y1) / (x2 - x1)
+        slopes.append(slopie)
+        b = y1 - (slopie * x1)
         intercepts.append(b)
-
-        return intercepts
-    
     return slopes, intercepts
 
 def detect_lanes(lines):
@@ -57,7 +58,7 @@ def detect_lanes(lines):
     return lanes
 
 def draw_lanes(img, lanes):
-    cv2.line
+    return 0
 
 
 
