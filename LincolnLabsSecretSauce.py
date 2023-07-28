@@ -34,9 +34,18 @@ def get_slopes_intercepts(lines):
     intercepts = []
     for line in lines:
         x1, y1, x2, y2 = line[0]  # Extract the coordinates from the inner list
-        slope = (y2 - y1) / (x2 - x1)
+        if (x2-x1) == 0:
+            x2 = 0.000000001
+            x1 = 0
+            slope = (y2 - y1) / (x2 - x1)
+        else:
+            slope = (y2 - y1) / (x2 - x1)
         slopes.append(slope)
-        b = y1 - (slope * x1)
+        if (slope) == 0:
+            slope += 0.000000000001
+            b = (2138-y1)/slope + x1
+        else:
+            b = (2138-y1)/slope + x1
         intercepts.append(b)
     return slopes, intercepts
 
@@ -46,7 +55,7 @@ def detect_lanes(lines):
     slopes, x_intercepts = get_slopes_intercepts(lines)
 
     while i < len(slopes) - 1: 
-        if abs(slopes[i] - slopes[i+1]) < 0.3 or abs(slopes[i+1] - slopes[i]) < 0.3:
+        if abs(slopes[i] + slopes[i+1]) < 0.3: #0.3 is error, 0 is perfect
             lanes.append([lines[i], lines[i+1]])
             i += 2
         else:

@@ -5,7 +5,7 @@ import LincolnLabsSecretSauce  as llss
 
 cap = cv2.VideoCapture('AUV_Vid.mkv')
 
-
+lineArray = []
 
 # Read until the video is completed
 while cap.isOpened():
@@ -16,7 +16,15 @@ while cap.isOpened():
         lines = llss.detect_lines(frame, 49, 50, 3, 500, 40)
 
         if lines is not None:
-            llss.get_slopes_intercepts(lines)
+            lanes = llss.detect_lanes(lines)
+            #print(lanes)
+            lineArray.append(lanes)
                 
+print(len(lineArray))
+
+#def get_lane_center(lanes):
+    
+
+    #return center_intercept, center_slope
                 
 
