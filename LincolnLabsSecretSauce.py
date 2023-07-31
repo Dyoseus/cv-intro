@@ -16,8 +16,20 @@ def detect_lines(img, threshold1 = 50, threshold2 = 150, apertureSize = 3, minLi
                     maxLineGap = maxLineGap,
             ) # detect lines
 
-
     return lines
+
+def elminate_lanes_air(img, lines):
+    h, w, c = img.shape
+
+    heightMax = h/2
+
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        if y2 < heightMax:
+            np.delete(lines, line[0])
+    
+    return lines
+    
 
 def draw_lines(img, lines, color=(255, 0, 0)):
     try:
@@ -49,7 +61,7 @@ def get_slopes_intercepts(lines):
         intercepts.append(b)
     return slopes, intercepts
 
-def detect_lanes(lines):
+def detect_lanes(img, lines):
     i = 0
     lanes = []
     slopes, x_intercepts = get_slopes_intercepts(lines)
@@ -59,13 +71,14 @@ def detect_lanes(lines):
             lanes.append([lines[i], lines[i+1]])
             i += 2
         else:
-            if np.abs(slopes[i+1] - slopes[i]) < 2 and np.abs(x_intercepts[i+1] - x_intercepts[i]) < 200:
+            if np.abs(slopes[i+1] - slopes[i]) < 2 and np.abs(x_intercepts[i+1] - x_intercepts[i]) < 100:
                 lanes.append([lines[i], lines[i+1]])
                 i += 2
             else:
                 i += 1
 
     return lanes
+
 
 def draw_lanes(img, lanes):
     for lane in lanes:
