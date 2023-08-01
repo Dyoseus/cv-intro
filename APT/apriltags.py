@@ -8,21 +8,22 @@ import signal
 
 from pid import PID
 
-
-def getTag1(frame, detected_tags):
-    print("start get tag")
-    # video.set(cv2.CAP_PROP_POS_FRAMES, frameNumber)
-    
-    print("video read")
-    cameraMatrix = np.array([1060.71, 0, 960, 0, 1060.71, 540, 0, 0, 1]).reshape((3, 3))
-    camera_params = (cameraMatrix[0, 0], cameraMatrix[1, 1], cameraMatrix[0, 2], cameraMatrix[1, 2])
-    at_detector = Detector(families='tag36h11',
+cameraMatrix = np.array([1060.71, 0, 960, 0, 1060.71, 540, 0, 0, 1]).reshape((3, 3))
+camera_params = (cameraMatrix[0, 0], cameraMatrix[1, 1], cameraMatrix[0, 2], cameraMatrix[1, 2])
+at_detector = Detector(families='tag36h11',
                            nthreads=1,
                            quad_decimate=1.0,
                            quad_sigma=0.0,
                            refine_edges=1,
                            decode_sharpening=0.25,
                            debug=0)
+
+def getTag1(frame, detected_tags):
+    print("start get tag")
+    # video.set(cv2.CAP_PROP_POS_FRAMES, frameNumber)
+    
+    print("video read")
+    
     # detected_tags = []
     print("finish camera params/before ret")
     
